@@ -496,3 +496,7 @@ input.cropit-image-zoom-input {
 }
 
 .accordion {--bs-accordion-border-width: 0;}
+
+.ltr{
+    direction: ltr;
+}
