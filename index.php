@@ -1,3 +1,24 @@
+<?php
+$version = '5.3.5';
+
+if (version_compare(phpversion(), '5.4', '<')) {
+    exit("QRcdr requires at least PHP version 5.4.");
+}
+
+if (!ini_get('allow_url_fopen')) {
+    exit("Please enable <code>allow_url_fopen<code>");
+}
+if (!function_exists('mime_content_type')) {
+    exit("Please enable the <code>fileinfo</code> extension");
+}
+require dirname(__FILE__)."/lib/functions.php";
+
+if (qrcdr()->getConfig('debug_mode')) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL ^ E_NOTICE);
+}
 $relative = qrcdr()->relativePath();
 require dirname(__FILE__).'/'.$relative.'include/head.php';
 ?>
@@ -7,9 +28,10 @@ require dirname(__FILE__).'/'.$relative.'include/head.php';
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-        <title>QR | SMAN 4 Muara Teweh</title></title>
-        <meta name="description" content="ini adalah laman generator atau pembuat kode QR yang ada dibawah naungan SMAN 4 Muara Teweh untuk kami dan publik">
-        <meta name="keywords" content="sma4mute,QR generator,smafourmute">
+        <title>QR</title>
+        <meta name="description" content="<?php echo qrcdr()->getString('QR Generator'); ?>">
+        <meta name="keywords" content="<?php echo qrcdr()->getString('tags'); ?>">
+        <link rel="shortcut icon" href="<?php echo $relative; ?>images/favicon.ico">
         <link href="<?php echo $relative; ?>bootstrap/css/bootstrap<?php echo $rtl['css']; ?>.min.css" rel="stylesheet">
         <link href="<?php echo $relative; ?>css/font-awesome.min.css" rel="stylesheet">
         <script src="<?php echo $relative; ?>js/jquery-3.5.1.min.js"></script>
@@ -33,22 +55,23 @@ require dirname(__FILE__).'/'.$relative.'include/head.php';
     <body class="<?php echo $body_class; ?>">
         <?php
         if (file_exists(dirname(__FILE__).'/'.$relative.'template/navbar.php')) {
+            include dirname(__FILE__).'/'.$relative.'template/navbar.php';
         }
         if (file_exists(dirname(__FILE__).'/'.$relative.'template/header.php')) {
- 
+            include dirname(__FILE__).'/'.$relative.'template/header.php';
         }
         if ($custom_page) {
             echo '<div class="container mt-4">'.$custom_page.'</div>';
         } else {
-
             include dirname(__FILE__).'/'.$relative.'include/generator.php';
-        }
-        if (file_exists(dirname(__FILE__).'/'.$relative.'template/footer.php')) {
         }
         qrcdr()->loadQRcdrJS($version);
 
         if (!$custom_page) {
             qrcdr()->loadPlugins();
+        }
+        if (file_exists(dirname(__FILE__).'/'.$relative.'template/footer.php')) {
+            include dirname(__FILE__).'/'.$relative.'template/footer.php';
         }
         ?>
     </body>
